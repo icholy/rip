@@ -77,9 +77,18 @@ func compileTemplate(tmplStr string, vars []string) (*template.Template, error) 
 	return template.New("").Parse(tstr)
 }
 
+var (
+	help = flag.Bool("h", false, "show help")
+)
+
 func main() {
 
 	flag.Parse()
+
+	if *help {
+		fmt.Println("rip [REGEX] [TEMPLATE]")
+		return
+	}
 
 	args := flag.Args()
 
