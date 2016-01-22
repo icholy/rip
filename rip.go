@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"strconv"
@@ -97,13 +96,15 @@ func main() {
 	// compile the regex
 	re, err := regexp.Compile(pattern)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		return
 	}
 
 	// compile the template
 	templ, err := compileTemplate(output, re.SubexpNames())
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("failed to parse template: %s\n", err)
+		return
 	}
 
 	// apply transformation
@@ -123,7 +124,8 @@ func main() {
 			Matches: matches,
 			Line:    line,
 		}); err != nil {
-			log.Fatal(err)
+			fmt.Printf("failed to populate template: %s\n", err)
+			return
 		}
 		os.Stdout.WriteString("\n")
 	}
