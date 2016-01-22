@@ -63,11 +63,14 @@ func varToIndex(vars []string, name string) (int, error) {
 
 func compileTemplate(tmplStr string, vars []string) (*template.Template, error) {
 	tstr, err := replaceVars(tmplStr, func(name string) (string, error) {
+		if name == "line" {
+			return "{{.Line}}", nil
+		}
 		index, err := varToIndex(vars, name)
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf("{{index . %d}}", index), nil
+		return fmt.Sprintf("{{index .Matches %d}}", index), nil
 	})
 	if err != nil {
 		return nil, err
@@ -99,11 +102,20 @@ func main() {
 	// apply transformation
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		matches := re.FindStringSubmatch(scanner.Text())
+		var (
+			line    = scanner.Text()
+			matches = re.FindStringSubmatch(line)
+		)
 		if len(matches) == 0 {
 			continue
 		}
-		if err := templ.Execute(os.Stdout, matches); err != nil {
+		if err := templ.Execute(os.Stdout, struct {
+			Matches []string
+			Line    string
+		}{
+			Matches: matches,
+			Line:    line,
+		}); err != nil {
 			log.Fatal(err)
 		}
 		os.Stdout.WriteString("\n")
