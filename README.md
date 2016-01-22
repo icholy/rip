@@ -9,7 +9,7 @@ rip [REGEX] [TEMPLATE]
 
 ### Template:
 
-Template variables are prefixes with `$`.
+Template variables are prefixed with `$`.
 
 * `$line` - the whole line
 * `$#` - capture group number
