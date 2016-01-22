@@ -78,23 +78,30 @@ func compileTemplate(tmplStr string, vars []string) (*template.Template, error) 
 	return template.New("").Parse(tstr)
 }
 
-var (
-	input  = flag.String("p", ".*", "regular expression")
-	output = flag.String("o", "$0", "output template")
-)
-
 func main() {
 
 	flag.Parse()
 
+	args := flag.Args()
+
+	pattern := ".*"
+	if len(args) > 0 {
+		pattern = args[0]
+	}
+
+	output := "$0"
+	if len(args) > 1 {
+		output = args[1]
+	}
+
 	// compile the regex
-	re, err := regexp.Compile(*input)
+	re, err := regexp.Compile(pattern)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// compile the template
-	templ, err := compileTemplate(*output, re.SubexpNames())
+	templ, err := compileTemplate(output, re.SubexpNames())
 	if err != nil {
 		log.Fatal(err)
 	}
