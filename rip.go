@@ -23,6 +23,21 @@ func isEscaped(s string, pos int) bool {
 	return slashes%2 != 0
 }
 
+func varToIndex(vars []string, name string) (int, error) {
+	if i, err := strconv.Atoi(name); err == nil {
+		if i >= len(vars) {
+			return 0, fmt.Errorf("$%s exceedes the number of subexpressions", name)
+		}
+		return i, nil
+	}
+	for i := 0; i < len(vars); i++ {
+		if vars[i] == name {
+			return i, nil
+		}
+	}
+	return 0, fmt.Errorf("$%s does not correspond to any subexpression", name)
+}
+
 func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	var (
 		regex   = regexp.MustCompile(`\$[\w\d]+`)
@@ -43,21 +58,6 @@ func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	}
 	buffer.WriteString(s[index:])
 	return buffer.String(), nil
-}
-
-func varToIndex(vars []string, name string) (int, error) {
-	if i, err := strconv.Atoi(name); err == nil {
-		if i >= len(vars) {
-			return 0, fmt.Errorf("$%s exceedes the number of subexpressions", name)
-		}
-		return i, nil
-	}
-	for i := 0; i < len(vars); i++ {
-		if vars[i] == name {
-			return i, nil
-		}
-	}
-	return 0, fmt.Errorf("$%s does not correspond to any subexpression", name)
 }
 
 func compileTemplate(tmplStr string, vars []string) (*template.Template, error) {
