@@ -30,10 +30,3 @@ Invoking rip without any arguments is equivalent to doing
 ```
 $ rip '.*' '$debug'
 ```
-
-### Examples:
-
-```
-$ ls | rip '^(?P<first_char>.)' '$first_char'
-$ ss -p | rip 'users:\(\("(\w+)' '$1'
-```
