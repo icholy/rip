@@ -30,3 +30,11 @@ Invoking rip without any arguments is equivalent to doing
 ```
 $ rip '.*' '$debug'
 ```
+
+### FAQ
+
+Q. Why would I use this instead of `sed`?
+A. `$debug` makes it easier to incrementally build up your regex.
+
+Q. How do I install it?
+A. `go get github.com/icholy/rip`
