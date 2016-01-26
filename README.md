@@ -19,6 +19,14 @@ Output pattern variables are prefixed with `$`.
 
 If the pattern is omitted, it defaults to `$debug`.
 
+### Defaults:
+
+Invoking rip without any arguments is equivalent to doing
+
+```
+$ rip '.*' '$debug'
+```
+
 ### Examples:
 
 ```
