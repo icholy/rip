@@ -11,6 +11,25 @@ import (
 	"text/template"
 )
 
+type TemplateData struct {
+	Matches []string
+	Line    string
+	Vars    []string
+}
+
+func (d *TemplateData) Debug() string {
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "$line = %s\n", d.Line)
+	for i, v := range d.Vars {
+		if len(v) == 0 {
+			fmt.Fprintf(&buf, "$%d = %s\n", i, d.Matches[i])
+		} else {
+			fmt.Fprintf(&buf, "$%s = %s\n", v, d.Matches[i])
+		}
+	}
+	return buf.String()
+}
+
 func isEscaped(s string, pos int) bool {
 	slashes := 0
 	for i := pos - 1; i >= 0; i-- {
@@ -62,8 +81,11 @@ func replaceVars(s string, f func(string) (string, error)) (string, error) {
 
 func compileTemplate(tmplStr string, vars []string) (*template.Template, error) {
 	tstr, err := replaceVars(tmplStr, func(name string) (string, error) {
-		if name == "line" {
+		switch name {
+		case "line":
 			return "{{.Line}}", nil
+		case "debug":
+			return "{{.Debug}}", nil
 		}
 		index, err := varToIndex(vars, name)
 		if err != nil {
@@ -97,7 +119,7 @@ func main() {
 		pattern = args[0]
 	}
 
-	output := "$0"
+	output := "$debug"
 	if len(args) > 1 {
 		output = args[1]
 	}
@@ -110,7 +132,8 @@ func main() {
 	}
 
 	// compile the template
-	templ, err := compileTemplate(output, re.SubexpNames())
+	vars := re.SubexpNames()
+	templ, err := compileTemplate(output, vars)
 	if err != nil {
 		fmt.Printf("failed to parse template: %s\n", err)
 		return
@@ -126,12 +149,10 @@ func main() {
 		if len(matches) == 0 {
 			continue
 		}
-		if err := templ.Execute(os.Stdout, struct {
-			Matches []string
-			Line    string
-		}{
+		if err := templ.Execute(os.Stdout, &TemplateData{
 			Matches: matches,
 			Line:    line,
+			Vars:    vars,
 		}); err != nil {
 			fmt.Printf("failed to populate template: %s\n", err)
 			return
