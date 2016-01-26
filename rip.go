@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"flag"
 	"fmt"
 	"os"
 	"regexp"
@@ -80,8 +79,8 @@ func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	return buffer.String(), nil
 }
 
-func compileTemplate(pattern string, vars []string) (*template.Template, error) {
-	tstr, err := replaceVars(pattern, func(name string) (string, error) {
+func compileTemplate(tmplStr string, vars []string) (*template.Template, error) {
+	tstr, err := replaceVars(tmplStr, func(name string) (string, error) {
 		switch name {
 		case "line":
 			return "{{.Line}}", nil
@@ -100,41 +99,30 @@ func compileTemplate(pattern string, vars []string) (*template.Template, error) 
 	return template.New("").Parse(tstr)
 }
 
-var (
-	help = flag.Bool("h", false, "show help")
-)
-
 func main() {
 
-	flag.Parse()
+	args := os.Args[1:]
 
-	if *help {
-		fmt.Println("rip [REGEX] [PATTERN]")
-		return
-	}
-
-	args := flag.Args()
-
-	regex := ".*"
+	pattern := ".*"
 	if len(args) > 0 {
-		regex = args[0]
+		pattern = args[0]
 	}
 
-	pattern := "$debug"
+	output := "$debug"
 	if len(args) > 1 {
-		pattern = args[1]
+		output = args[1]
 	}
 
 	// compile the regex
-	re, err := regexp.Compile(regex)
+	re, err := regexp.Compile(pattern)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// compile the pattern
+	// compile the template
 	vars := re.SubexpNames()
-	patternTemplate, err := compileTemplate(pattern, vars)
+	templ, err := compileTemplate(output, vars)
 	if err != nil {
 		fmt.Printf("failed to parse template: %s\n", err)
 		return
@@ -152,7 +140,7 @@ func main() {
 		if len(matches) == 0 {
 			matches = empty
 		}
-		if err := patternTemplate.Execute(os.Stdout, &TemplateData{
+		if err := templ.Execute(os.Stdout, &TemplateData{
 			Matches: matches,
 			Line:    line,
 			Vars:    vars,
