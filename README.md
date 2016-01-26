@@ -4,7 +4,8 @@
 
 ### Description:
 
-Parse lines from stdin using regular expressions. Then reformat them using a pattern (template).
+Parse lines from stdin using regular expressions. Then rewrite them using a pattern (template).
+Matches and capture groups can be accessed via variables in the pattern.
 
 ### Usage:
 ```
