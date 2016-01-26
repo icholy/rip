@@ -140,6 +140,8 @@ func main() {
 		return
 	}
 
+	empty := make([]string, len(vars))
+
 	// apply transformation
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
@@ -148,7 +150,7 @@ func main() {
 			matches = re.FindStringSubmatch(line)
 		)
 		if len(matches) == 0 {
-			continue
+			matches = empty
 		}
 		if err := templ.Execute(os.Stdout, &TemplateData{
 			Matches: matches,
