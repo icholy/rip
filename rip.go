@@ -80,8 +80,8 @@ func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	return buffer.String(), nil
 }
 
-func compileTemplate(tmplStr string, vars []string) (*template.Template, error) {
-	tstr, err := replaceVars(tmplStr, func(name string) (string, error) {
+func compileTemplate(pattern string, vars []string) (*template.Template, error) {
+	tstr, err := replaceVars(pattern, func(name string) (string, error) {
 		switch name {
 		case "line":
 			return "{{.Line}}", nil
@@ -109,32 +109,32 @@ func main() {
 	flag.Parse()
 
 	if *help {
-		fmt.Println("rip [REGEX] [TEMPLATE]")
+		fmt.Println("rip [REGEX] [PATTERN]")
 		return
 	}
 
 	args := flag.Args()
 
-	pattern := ".*"
+	regex := ".*"
 	if len(args) > 0 {
-		pattern = args[0]
+		regex = args[0]
 	}
 
-	output := "$debug"
+	pattern := "$debug"
 	if len(args) > 1 {
-		output = args[1]
+		pattern = args[1]
 	}
 
 	// compile the regex
-	re, err := regexp.Compile(pattern)
+	re, err := regexp.Compile(regex)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// compile the template
+	// compile the pattern
 	vars := re.SubexpNames()
-	templ, err := compileTemplate(output, vars)
+	patternTemplate, err := compileTemplate(pattern, vars)
 	if err != nil {
 		fmt.Printf("failed to parse template: %s\n", err)
 		return
@@ -152,7 +152,7 @@ func main() {
 		if len(matches) == 0 {
 			matches = empty
 		}
-		if err := templ.Execute(os.Stdout, &TemplateData{
+		if err := patternTemplate.Execute(os.Stdout, &TemplateData{
 			Matches: matches,
 			Line:    line,
 			Vars:    vars,

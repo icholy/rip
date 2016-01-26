@@ -4,12 +4,12 @@
 
 ### Usage:
 ```
-rip [REGEX] [TEMPLATE]
+rip [REGEX] [PATTERN]
 ```
 
-### Template:
+### Pattern:
 
-Template variables are prefixed with `$`.
+Output pattern variables are prefixed with `$`.
 
 * `$debug` - dump all variables
 * `$line` - the whole line
@@ -17,7 +17,7 @@ Template variables are prefixed with `$`.
 * `$#` - capture group number
 * `$name` - capture group name
 
-If the template is omitted, it defaults to `$debug`.
+If the pattern is omitted, it defaults to `$debug`.
 
 ### Examples:
 
