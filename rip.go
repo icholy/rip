@@ -8,6 +8,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"text/template"
 )
 
@@ -19,7 +20,7 @@ type TemplateData struct {
 
 func (d *TemplateData) Debug() string {
 	var buf bytes.Buffer
-	fmt.Fprintf(&buf, "$line = %s\n", d.Line)
+	fmt.Fprintf(&buf, "%s\n%s\n", d.Line, strings.Repeat("-", len(d.Line)))
 	for i, v := range d.Vars {
 		if len(v) == 0 {
 			fmt.Fprintf(&buf, "$%d = %s\n", i, d.Matches[i])
