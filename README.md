@@ -1,6 +1,6 @@
 # RIP
 
-> sed and grep had a baby
+> converts *r*egex *i*nto *p*attern
 
 ### Usage:
 ```
