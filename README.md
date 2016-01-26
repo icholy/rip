@@ -2,6 +2,10 @@
 
 > Convert **r**egex **i**nto **p**attern
 
+### Description:
+
+Parse lines from stdin using regular expressions. Then reformat them using a pattern (template).
+
 ### Usage:
 ```
 rip [REGEX] [PATTERN]
