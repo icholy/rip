@@ -1,6 +1,6 @@
 # RIP
 
-> converts **r**egex **i**nto **p**attern
+> Converts **r**egex **i**nto **p**attern
 
 ### Usage:
 ```
