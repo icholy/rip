@@ -7,6 +7,10 @@
 rip [REGEX] [PATTERN]
 ```
 
+### Demo:
+
+![](http://i.imgur.com/YaBAlRQ.gif)
+
 ### Pattern:
 
 Output pattern variables are prefixed with `$`.
