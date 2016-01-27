@@ -4,12 +4,11 @@
 
 ### Description:
 
-Parse lines from stdin using regular expressions. Then rewrite them using a pattern (template).
-Matches and capture groups can be accessed via variables in the pattern.
+Extract data from input using regular expressions.
 
 ### Usage:
 ```
-rip [REGEX] [PATTERN]
+rip [REGULAR EXPRESSION] [OUTPUT PATTERN]
 ```
 
 ### Demo:
