@@ -21,6 +21,7 @@ Output pattern variables are prefixed with `$`.
 
 * `$debug` - dump all variables
 * `$line` - the whole line
+* `$count` - current item number
 * `$0` - the whole match
 * `$#` - capture group number
 * `$name` - capture group name

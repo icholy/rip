@@ -15,6 +15,7 @@ type TemplateData struct {
 	Matches []string
 	Line    string
 	Vars    []string
+	Count   int
 }
 
 func (d *TemplateData) Debug() string {
@@ -92,6 +93,8 @@ func compileTemplate(tmplStr string, vars []string) (*template.Template, error) 
 			return "{{.Line}}", nil
 		case "debug":
 			return "{{.Debug}}", nil
+		case "count":
+			return "{{.Count}}", nil
 		}
 		index, err := varToIndex(vars, name)
 		if err != nil {
@@ -136,6 +139,7 @@ func main() {
 
 	// apply transformation
 	scanner := bufio.NewScanner(os.Stdin)
+	var count int
 	for scanner.Scan() {
 		var (
 			line    = scanner.Text()
@@ -144,9 +148,11 @@ func main() {
 		if len(matches) == 0 {
 			continue
 		}
+		count++
 		if err := templ.Execute(os.Stdout, &TemplateData{
 			Matches: matches,
 			Line:    line,
+			Count:   count,
 			Vars:    vars,
 		}); err != nil {
 			fmt.Printf("failed to populate template: %s\n", err)
