@@ -59,15 +59,21 @@ func varToIndex(vars []string, name string) (int, error) {
 
 func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	var (
-		regex   = regexp.MustCompile(`\$[\w\d]+`)
-		matches = regex.FindAllStringIndex(s, -1)
+		regex   = regexp.MustCompile(`\$(:?([\w\d]+)|{([\w\d]+)})`)
+		matches = regex.FindAllStringSubmatchIndex(s, -1)
 		index   = 0
 		buffer  bytes.Buffer
 	)
 	for _, m := range matches {
+		var name string
+		if m[4] != -1 {
+			name = s[m[4]:m[5]]
+		} else {
+			name = s[m[6]:m[7]]
+		}
 		if !isEscaped(s, m[0]) {
 			buffer.WriteString(s[index:m[0]])
-			if replace, err := f(s[m[0]+1 : m[1]]); err != nil {
+			if replace, err := f(name); err != nil {
 				return "", err
 			} else {
 				buffer.WriteString(replace)
