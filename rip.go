@@ -23,9 +23,9 @@ func (d *TemplateData) Debug() string {
 	fmt.Fprintf(&buf, "%s\n%s\n", d.Line, strings.Repeat("-", len(d.Line)))
 	for i, v := range d.Vars {
 		if len(v) == 0 {
-			fmt.Fprintf(&buf, "$%d = %s\n", i, d.Matches[i])
+			fmt.Fprintf(&buf, "%%%d = %s\n", i, d.Matches[i])
 		} else {
-			fmt.Fprintf(&buf, "$%s = %s\n", v, d.Matches[i])
+			fmt.Fprintf(&buf, "%%%s = %s\n", v, d.Matches[i])
 		}
 	}
 	return buf.String()
@@ -46,7 +46,7 @@ func isEscaped(s string, pos int) bool {
 func varToIndex(vars []string, name string) (int, error) {
 	if i, err := strconv.Atoi(name); err == nil {
 		if i >= len(vars) {
-			return 0, fmt.Errorf("$%s exceedes the number of subexpressions", name)
+			return 0, fmt.Errorf("%%%s exceedes the number of subexpressions", name)
 		}
 		return i, nil
 	}
@@ -55,12 +55,12 @@ func varToIndex(vars []string, name string) (int, error) {
 			return i, nil
 		}
 	}
-	return 0, fmt.Errorf("$%s does not correspond to any subexpression", name)
+	return 0, fmt.Errorf("%%%s does not correspond to any subexpression", name)
 }
 
 func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	var (
-		regex   = regexp.MustCompile(`\$(:?([\w\d]+)|{([\w\d]+)})`)
+		regex   = regexp.MustCompile(`%(:?([\w\d]+)|{([\w\d]+)})`)
 		matches = regex.FindAllStringSubmatchIndex(s, -1)
 		index   = 0
 		buffer  bytes.Buffer
@@ -117,9 +117,9 @@ func main() {
 		pattern = args[0]
 	}
 
-	output := "$debug"
+	output := "%debug"
 	if len(args) > 1 {
-		output = args[1]
+		output = strings.Join(args[1:], " ")
 	}
 
 	// compile the regex
