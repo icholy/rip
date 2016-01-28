@@ -74,7 +74,7 @@ func varToIndex(vars []string, name string) (int, error) {
 
 func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	var (
-		regex   = regexp.MustCompile(`\$(:?([\w\d]+)|{([\w\d]+)}|{(![^]]*)})`)
+		regex   = regexp.MustCompile(`\$(:?([\w\d]+)|{([\w\d]+)}|{(![^]]+)})`)
 		matches = regex.FindAllStringSubmatchIndex(s, -1)
 		index   = 0
 		buffer  bytes.Buffer
