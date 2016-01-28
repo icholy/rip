@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
@@ -29,6 +30,19 @@ func (d *TemplateData) Debug() string {
 		}
 	}
 	return buf.String()
+}
+
+func (d *TemplateData) Exec(cmd string) string {
+	var (
+		fields = strings.Fields(cmd)
+		head   = fields[0]
+		tail   = fields[1:len(fields)]
+	)
+	out, err := exec.Command(head, tail...).Output()
+	if err != nil {
+		return err.Error()
+	}
+	return strings.TrimSpace(string(out))
 }
 
 func isEscaped(s string, pos int) bool {
@@ -60,17 +74,22 @@ func varToIndex(vars []string, name string) (int, error) {
 
 func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	var (
-		regex   = regexp.MustCompile(`\$(:?([\w\d]+)|{([\w\d]+)})`)
+		regex   = regexp.MustCompile(`\$(:?([\w\d]+)|{([\w\d]+)}|{(![^]]*)})`)
 		matches = regex.FindAllStringSubmatchIndex(s, -1)
 		index   = 0
 		buffer  bytes.Buffer
 	)
 	for _, m := range matches {
 		var name string
-		if m[4] != -1 {
+		switch {
+		case m[4] != -1:
 			name = s[m[4]:m[5]]
-		} else {
+		case m[6] != -1:
 			name = s[m[6]:m[7]]
+		case m[8] != -1:
+			name = s[m[8]:m[9]]
+		default:
+			return "", fmt.Errorf("failed to parse template")
 		}
 		if !isEscaped(s, m[0]) {
 			buffer.WriteString(s[index:m[0]])
@@ -96,6 +115,11 @@ func compileTemplate(tmplStr string, vars []string) (*template.Template, error) 
 		case "count":
 			return "{{.Count}}", nil
 		}
+
+		if strings.HasPrefix(name, "!") {
+			return fmt.Sprintf(`{{.Exec "%s"}}`, name[1:]), nil
+		}
+
 		index, err := varToIndex(vars, name)
 		if err != nil {
 			return "", err
