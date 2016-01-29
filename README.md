@@ -38,6 +38,8 @@ $ rip '.*' '$debug'
 ```
 
 You can change the default pattern by setting the `RIP_PATTERN` env variable.
+Similarly, the default regex can be changed with the `RIP_REGEX` variable.
+
 
 ```
 $ export RIP_PATTERN='$0'
