@@ -13,7 +13,7 @@ rip [REGULAR EXPRESSION] [OUTPUT PATTERN]
 
 ### Demo:
 
-![](http://i.imgur.com/YaBAlRQ.gif)
+![](http://i.imgur.com/1mpK75L.gif)
 
 ### Pattern:
 
