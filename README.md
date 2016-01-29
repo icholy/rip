@@ -37,6 +37,12 @@ Invoking rip without any arguments is equivalent to doing
 $ rip '.*' '$debug'
 ```
 
+You can change the default pattern by setting the `RIP_PATTERN` env variable.
+
+```
+$ export RIP_PATTERN='$0'
+```
+
 ### FAQ
 
 **Q.** Why would I use this instead of `sed`?  
