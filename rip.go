@@ -157,21 +157,23 @@ func main() {
 	for scanner.Scan() {
 		var (
 			line    = scanner.Text()
-			matches = re.FindStringSubmatch(line)
+			matches = re.FindAllStringSubmatch(line, -1)
 		)
-		if len(matches) == 0 {
-			continue
+		for _, match := range matches {
+			if len(match) == 0 {
+				continue
+			}
+			count++
+			if err := templ.Execute(os.Stdout, &TemplateData{
+				Matches: match,
+				Line:    line,
+				Count:   count,
+				Vars:    vars,
+			}); err != nil {
+				fmt.Printf("failed to populate template: %s\n", err)
+				return
+			}
+			os.Stdout.WriteString("\n")
 		}
-		count++
-		if err := templ.Execute(os.Stdout, &TemplateData{
-			Matches: matches,
-			Line:    line,
-			Count:   count,
-			Vars:    vars,
-		}); err != nil {
-			fmt.Printf("failed to populate template: %s\n", err)
-			return
-		}
-		os.Stdout.WriteString("\n")
 	}
 }
