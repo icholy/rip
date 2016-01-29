@@ -51,4 +51,4 @@ $ export RIP_PATTERN='$0'
 **A.** `$debug` makes it easier to incrementally build up your regex.
 
 **Q.** How do I install it?  
-**A.** `go get github.com/icholy/rip`
+**A.** Download [here](https://github.com/icholy/rip/releases)
