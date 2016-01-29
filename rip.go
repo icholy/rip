@@ -108,6 +108,16 @@ func compilePattern(pattern string, vars []string) (*template.Template, error) {
 	return template.New("").Parse(tstr)
 }
 
+var (
+	defaultPattern string = "$debug"
+)
+
+func init() {
+	if envPattern, ok := os.LookupEnv("RIP_PATTERN"); ok {
+		defaultPattern = envPattern
+	}
+}
+
 func main() {
 
 	args := os.Args[1:]
@@ -117,7 +127,7 @@ func main() {
 		regex = args[0]
 	}
 
-	pattern := "$debug"
+	pattern := defaultPattern
 	if len(args) > 1 {
 		pattern = args[1]
 	}
