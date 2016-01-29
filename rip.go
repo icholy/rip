@@ -110,7 +110,7 @@ func compilePattern(pattern string, vars []string) (*template.Template, error) {
 
 var (
 	defaultRegex   = ".*"
-	defaultPattern = "$debug"
+	defaultPattern = "$0"
 )
 
 func init() {
