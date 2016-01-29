@@ -86,8 +86,8 @@ func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	return buffer.String(), nil
 }
 
-func compileTemplate(tmplStr string, vars []string) (*template.Template, error) {
-	tstr, err := replaceVars(tmplStr, func(name string) (string, error) {
+func compilePattern(pattern string, vars []string) (*template.Template, error) {
+	tstr, err := replaceVars(pattern, func(name string) (string, error) {
 		switch name {
 		case "line":
 			return "{{.Line}}", nil
@@ -112,18 +112,18 @@ func main() {
 
 	args := os.Args[1:]
 
-	pattern := ".*"
+	regex := ".*"
 	if len(args) > 0 {
-		pattern = args[0]
+		regex = args[0]
 	}
 
-	output := "$debug"
+	pattern := "$debug"
 	if len(args) > 1 {
-		output = args[1]
+		pattern = args[1]
 	}
 
 	// compile the regex
-	re, err := regexp.Compile(pattern)
+	re, err := regexp.Compile(regex)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -131,7 +131,7 @@ func main() {
 
 	// compile the template
 	vars := re.SubexpNames()
-	templ, err := compileTemplate(output, vars)
+	templ, err := compilePattern(pattern, vars)
 	if err != nil {
 		fmt.Printf("failed to parse template: %s\n", err)
 		return
