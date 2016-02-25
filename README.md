@@ -26,7 +26,7 @@ Output pattern variables are prefixed with `$`.
 * `$#` - capture group number
 * `$name` - capture group name
 
-If the pattern is omitted, it defaults to `$debug`.  
+If the pattern is omitted, it defaults to `$0`.  
 Variable names can be isolated with braces. `${debug}`
 
 ### Defaults:
@@ -34,7 +34,7 @@ Variable names can be isolated with braces. `${debug}`
 Invoking rip without any arguments is equivalent to doing
 
 ```
-$ rip '.*' '$debug'
+$ rip '.*' '$0'
 ```
 
 You can change the default pattern by setting the `RIP_PATTERN` env variable.
