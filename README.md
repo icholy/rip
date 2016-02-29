@@ -44,8 +44,8 @@ $ rip '.*' '$0'
 * `RIP_PREFIX` changed the default variable prefix (default=`$`).
 
 ```
-$ export RIP_PATTERN='$debug'
 $ export RIP_PREFIX='%'
+$ export RIP_PATTERN='%debug'
 ```
 
 ### FAQ
