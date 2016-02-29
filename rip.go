@@ -11,6 +11,12 @@ import (
 	"text/template"
 )
 
+var (
+	ripRegex   = ".*"
+	ripPattern = "$0"
+	ripPrefix  = "$"
+)
+
 type TemplateData struct {
 	Matches []string
 	Line    string
@@ -23,9 +29,9 @@ func (d *TemplateData) Debug() string {
 	fmt.Fprintf(&buf, "%s\n%s\n", d.Line, strings.Repeat("-", len(d.Line)))
 	for i, v := range d.Vars {
 		if len(v) == 0 {
-			fmt.Fprintf(&buf, "$%d = %s\n", i, d.Matches[i])
+			fmt.Fprintf(&buf, "%s%d = %s\n", ripPrefix, i, d.Matches[i])
 		} else {
-			fmt.Fprintf(&buf, "$%s = %s\n", v, d.Matches[i])
+			fmt.Fprintf(&buf, "%s%s = %s\n", ripPrefix, v, d.Matches[i])
 		}
 	}
 	return buf.String()
@@ -46,7 +52,7 @@ func isEscaped(s string, pos int) bool {
 func varToIndex(vars []string, name string) (int, error) {
 	if i, err := strconv.Atoi(name); err == nil {
 		if i >= len(vars) {
-			return 0, fmt.Errorf("$%s exceedes the number of subexpressions", name)
+			return 0, fmt.Errorf("%s%s exceedes the number of subexpressions", ripPrefix, name)
 		}
 		return i, nil
 	}
@@ -55,12 +61,12 @@ func varToIndex(vars []string, name string) (int, error) {
 			return i, nil
 		}
 	}
-	return 0, fmt.Errorf("$%s does not correspond to any subexpression", name)
+	return 0, fmt.Errorf("%s%s does not correspond to any subexpression", ripPrefix, name)
 }
 
 func replaceVars(s string, f func(string) (string, error)) (string, error) {
 	var (
-		regex   = regexp.MustCompile(`\$(:?([\w\d]+)|{([\w\d]+)})`)
+		regex   = regexp.MustCompile(`\` + ripPrefix + `(:?([\w\d]+)|{([\w\d]+)})`)
 		matches = regex.FindAllStringSubmatchIndex(s, -1)
 		index   = 0
 		buffer  bytes.Buffer
@@ -108,30 +114,38 @@ func compilePattern(pattern string, vars []string) (*template.Template, error) {
 	return template.New("").Parse(tstr)
 }
 
-var (
-	defaultRegex   = ".*"
-	defaultPattern = "$0"
-)
+func isValidPrefix(s string) bool {
+	return s == "$" || s == "%" || s == "#"
+}
 
 func init() {
+	if envPrefix, ok := os.LookupEnv("RIP_PREFIX"); ok {
+		ripPrefix = envPrefix
+		ripPattern = envPrefix + "0"
+	}
 	if envPattern, ok := os.LookupEnv("RIP_PATTERN"); ok {
-		defaultPattern = envPattern
+		ripPattern = envPattern
 	}
 	if envRegex, ok := os.LookupEnv("RIP_REGEX"); ok {
-		defaultRegex = envRegex
+		ripRegex = envRegex
 	}
 }
 
 func main() {
 
+	if !isValidPrefix(ripPrefix) {
+		fmt.Printf("%s is not a supported prefix, choose one of: $, %%, #\n")
+		return
+	}
+
 	args := os.Args[1:]
 
-	regex := defaultRegex
+	regex := ripRegex
 	if len(args) > 0 {
 		regex = args[0]
 	}
 
-	pattern := defaultPattern
+	pattern := ripPattern
 	if len(args) > 1 {
 		pattern = args[1]
 	}

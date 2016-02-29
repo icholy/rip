@@ -27,7 +27,8 @@ Output pattern variables are prefixed with `$`.
 * `$name` - capture group name
 
 If the pattern is omitted, it defaults to `$0`.  
-Variable names can be isolated with braces. `${debug}`
+Variable names can be isolated with braces. `${debug}`.  
+To insert a literal `$` into your pattern, escape it with a backslash.
 
 ### Defaults:
 
@@ -37,12 +38,15 @@ Invoking rip without any arguments is equivalent to doing
 $ rip '.*' '$0'
 ```
 
-You can change the default pattern by setting the `RIP_PATTERN` env variable.
-Similarly, the default regex can be changed with the `RIP_REGEX` variable.
+### Environment Variables
 
+* `RIP_PATTERN` changes the default pattern (default=`$0`).
+* `RIP_REGEX` changes the default regex (default=`.*`).
+* `RIP_PREFIX` changed the default variable prefix (default=`$`).
 
 ```
-$ export RIP_PATTERN='$0'
+$ export RIP_PATTERN='$debug'
+$ export RIP_PREFIX='%'
 ```
 
 ### FAQ
