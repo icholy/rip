@@ -26,7 +26,6 @@ Output pattern variables are prefixed with `$`.
 * `$#` - capture group number
 * `$name` - capture group name
 
-If the pattern is omitted, it defaults to `$0`.  
 Variable names can be isolated with braces. `${debug}`.  
 To insert a literal `$` into your pattern, escape it with a backslash.
 
