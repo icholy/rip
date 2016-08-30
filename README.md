@@ -1,4 +1,4 @@
-# RIP
+![](rip.png)
 
 > Convert **r**egex **i**nto **p**attern
 
