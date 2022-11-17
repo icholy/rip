@@ -34,7 +34,7 @@ To insert a literal `$` into your pattern, escape it with a backslash.
 Invoking rip without any arguments is equivalent to doing
 
 ```
-$ rip '.*' '$0'
+$ rip '.*' '$debug'
 ```
 
 ### Environment Variables
