@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
@@ -132,13 +134,16 @@ func init() {
 }
 
 func main() {
+	var execute bool
+	flag.BoolVar(&execute, "x", false, "execute the pattern using sh")
+	flag.Parse()
 
 	if !isValidPrefix(ripPrefix) {
 		fmt.Printf("%s is not a supported prefix, choose one of: $, %%, #\n", ripPrefix)
 		return
 	}
 
-	args := os.Args[1:]
+	args := flag.Args()
 
 	regex := ripRegex
 	if len(args) > 0 {
@@ -166,6 +171,7 @@ func main() {
 	}
 
 	// apply transformation
+	var buf strings.Builder
 	scanner := bufio.NewScanner(os.Stdin)
 	var count int
 	for scanner.Scan() {
@@ -178,7 +184,8 @@ func main() {
 				continue
 			}
 			count++
-			if err := templ.Execute(os.Stdout, &TemplateData{
+			buf.Reset()
+			if err := templ.Execute(&buf, &TemplateData{
 				Matches: match,
 				Line:    line,
 				Count:   count,
@@ -187,7 +194,17 @@ func main() {
 				fmt.Printf("failed to populate template: %s\n", err)
 				return
 			}
-			os.Stdout.WriteString("\n")
+			if execute {
+				cmd := exec.Command("sh", "-c", buf.String())
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+				if err := cmd.Run(); err != nil {
+					fmt.Fprintf(os.Stderr, "sh: %v\n", err)
+				}
+			} else {
+				os.Stdout.WriteString(buf.String())
+				os.Stdout.WriteString("\n")
+			}
 		}
 	}
 }
