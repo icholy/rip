@@ -13,7 +13,7 @@ import (
 
 var (
 	ripRegex   = ".*"
-	ripPattern = "$0"
+	ripPattern = "$debug"
 	ripPrefix  = "$"
 )
 

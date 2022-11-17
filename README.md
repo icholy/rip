@@ -39,7 +39,7 @@ $ rip '.*' '$0'
 
 ### Environment Variables
 
-* `RIP_PATTERN` changes the default pattern (default=`$0`).
+* `RIP_PATTERN` changes the default pattern (default=`$debug`).
 * `RIP_REGEX` changes the default regex (default=`.*`).
 * `RIP_PREFIX` changed the default variable prefix (default=`$`).
 
@@ -54,4 +54,4 @@ $ export RIP_PATTERN='%debug'
 **A.** `$debug` makes it easier to incrementally build up your regex.
 
 **Q.** How do I install it?  
-**A.** Download [here](https://github.com/icholy/rip/releases)
+**A.** `go install github.com/icholy/rip@latest`
