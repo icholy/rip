@@ -134,7 +134,7 @@ func init() {
 func main() {
 
 	if !isValidPrefix(ripPrefix) {
-		fmt.Printf("%s is not a supported prefix, choose one of: $, %%, #\n")
+		fmt.Printf("%s is not a supported prefix, choose one of: $, %%, #\n", ripPrefix)
 		return
 	}
 
